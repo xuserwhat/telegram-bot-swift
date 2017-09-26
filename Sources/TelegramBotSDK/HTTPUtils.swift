@@ -30,9 +30,7 @@ public class HTTPUtils {
                 continue
             }
             
-            guard let keyString = String(key) else {
-                continue
-            }
+            let keyString = String(key)
             
             var valueString: String
             
@@ -109,10 +107,7 @@ public class HTTPUtils {
                 continue
             }
             
-            guard let keyString = String(key) else {
-                continue
-            }
-            
+            let keyString = String(key)
             body.append(boundary1)
             if let inputFile = value as? InputFile {
                 let filename = inputFile.filename
