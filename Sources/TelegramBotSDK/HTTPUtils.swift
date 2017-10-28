@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 public class HTTPUtils {
     /// Encodes keys and values in a dictionary for using with
@@ -41,7 +42,16 @@ public class HTTPUtils {
                 // If true, add "key=" to encoded string
                 valueString = "true"
             } else {
-                valueString = String(describing: value)
+                if let jsonConvertible = value as? JsonConvertible {
+                    if let resultString = jsonConvertible.json.rawString(options: JSONSerialization.WritingOptions()) {
+                        print(resultString)
+                        valueString = String(describing: resultString)
+                    } else {
+                        continue
+                    }
+                } else {
+                    valueString = String(describing: value)
+                }
             }
             
             if !result.isEmpty {
@@ -49,7 +59,7 @@ public class HTTPUtils {
             }
             let keyUrlencoded = keyString?.formUrlencode()
             let valueUrlencoded = valueString.formUrlencode()
-            result += "\(keyUrlencoded)=\(valueUrlencoded)"
+            result += "\(keyUrlencoded ?? "")=\(valueUrlencoded)"
         }
         return result
     }
@@ -113,7 +123,7 @@ public class HTTPUtils {
                 let filename = inputFile.filename
                 let mimetype = inputFile.mimeType ?? mimeType(for: filename)
                 let data = inputFile.data
-                guard let contentDisposition = "Content-Disposition: form-data; name=\"\(keyString)\"; filename=\"\(filename)\"\r\n".data(using: .utf8) else {
+                guard let contentDisposition = "Content-Disposition: form-data; name=\"\(String(describing: keyString))\"; filename=\"\(filename)\"\r\n".data(using: .utf8) else {
                     return nil
                 }
                 body.append(contentDisposition)
@@ -137,7 +147,7 @@ public class HTTPUtils {
                     valueString = String(describing: value)
                 }
                 
-                guard let contentDisposition = "Content-Disposition: form-data; name=\"\(keyString)\"\r\n\r\n".data(using: .utf8) else {
+                guard let contentDisposition = "Content-Disposition: form-data; name=\"\(String(describing: keyString))\"\r\n\r\n".data(using: .utf8) else {
                     return nil
                 }
                 body.append(contentDisposition)
