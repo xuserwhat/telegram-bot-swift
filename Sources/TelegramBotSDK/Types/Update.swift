@@ -74,7 +74,7 @@ public struct Update: JsonConvertible {
         }
     }
 
-    /// Optional. The result of an inline query that was chosen by a user and sent to their chat partner.
+    /// Optional. The result of an inline query that was chosen by a user and sent to their chat partner. Please see our documentation on the feedback collecting for details on how to enable these updates for your bot.
     public var chosen_inline_result: ChosenInlineResult? {
         get {
             let value = json["chosen_inline_result"]
@@ -93,6 +93,28 @@ public struct Update: JsonConvertible {
         }
         set {
             json["callback_query"] = newValue?.json ?? JSON.null
+        }
+    }
+
+    /// Optional. New incoming shipping query. Only for invoices with flexible price
+    public var shipping_query: ShippingQuery? {
+        get {
+            let value = json["shipping_query"]
+            return value.isNullOrUnknown ? nil : ShippingQuery(json: value)
+        }
+        set {
+            json["shipping_query"] = newValue?.json ?? JSON.null
+        }
+    }
+
+    /// Optional. New incoming pre-checkout query. Contains full information about checkout
+    public var pre_checkout_query: PreCheckoutQuery? {
+        get {
+            let value = json["pre_checkout_query"]
+            return value.isNullOrUnknown ? nil : PreCheckoutQuery(json: value)
+        }
+        set {
+            json["pre_checkout_query"] = newValue?.json ?? JSON.null
         }
     }
 

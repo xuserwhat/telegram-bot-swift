@@ -18,7 +18,7 @@ public struct Message: JsonConvertible {
         set { json["message_id"].intValue = newValue }
     }
 
-    /// Optional. Sender, can be empty for messages sent to channels
+    /// Optional. Sender, empty for messages sent to channels
     public var from: User? {
         get {
             let value = json["from"]
@@ -52,7 +52,7 @@ public struct Message: JsonConvertible {
         }
     }
 
-    /// Optional. For messages forwarded from a channel, information about the original channel
+    /// Optional. For messages forwarded from channels, information about the original channel
     public var forward_from_chat: Chat? {
         get {
             let value = json["forward_from_chat"]
@@ -63,10 +63,16 @@ public struct Message: JsonConvertible {
         }
     }
 
-    /// Optional. For forwarded channel posts, identifier of the original message in the channel
+    /// Optional. For messages forwarded from channels, identifier of the original message in the channel
     public var forward_from_message_id: Int? {
         get { return json["forward_from_message_id"].int }
         set { json["forward_from_message_id"].int = newValue }
+    }
+
+    /// Optional. For messages forwarded from channels, signature of the post author if present
+    public var forward_signature: String? {
+        get { return json["forward_signature"].string }
+        set { json["forward_signature"].string = newValue }
     }
 
     /// Optional. For forwarded messages, date the original message was sent in Unix time
@@ -92,6 +98,12 @@ public struct Message: JsonConvertible {
         set { json["edit_date"].int = newValue }
     }
 
+    /// Optional. Signature of the post author for messages in channels
+    public var author_signature: String? {
+        get { return json["author_signature"].string }
+        set { json["author_signature"].string = newValue }
+    }
+
     /// Optional. For text messages, the actual UTF-8 text of the message, 0-4096 characters.
     public var text: String? {
         get { return json["text"].string }
@@ -102,6 +114,12 @@ public struct Message: JsonConvertible {
     public var entities: [MessageEntity] {
         get { return json["entities"].arrayValue() }
         set { json["entities"] = newValue.isEmpty ? JSON.null : JSON.initFrom(newValue) }
+    }
+
+    /// Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption
+    public var caption_entities: [MessageEntity] {
+        get { return json["caption_entities"].arrayValue() }
+        set { json["caption_entities"] = newValue.isEmpty ? JSON.null : JSON.initFrom(newValue) }
     }
 
     /// Optional. Message is an audio file, information about the file
@@ -176,7 +194,18 @@ public struct Message: JsonConvertible {
         }
     }
 
-    /// Optional. Caption for the document, photo or video, 0-200 characters
+    /// Optional. Message is a video note, information about the video message
+    public var video_note: VideoNote? {
+        get {
+            let value = json["video_note"]
+            return value.isNullOrUnknown ? nil : VideoNote(json: value)
+        }
+        set {
+            json["video_note"] = newValue?.json ?? JSON.null
+        }
+    }
+
+    /// Optional. Caption for the audio, document, photo, video or voice, 0-200 characters
     public var caption: String? {
         get { return json["caption"].string }
         set { json["caption"].string = newValue }
@@ -215,15 +244,10 @@ public struct Message: JsonConvertible {
         }
     }
 
-    /// Optional. A new member was added to the group, information about them (this member may be the bot itself)
-    public var new_chat_member: User? {
-        get {
-            let value = json["new_chat_member"]
-            return value.isNullOrUnknown ? nil : User(json: value)
-        }
-        set {
-            json["new_chat_member"] = newValue?.json ?? JSON.null
-        }
+    /// Optional. New members that were added to the group or supergroup and information about them (the bot itself may be one of these members)
+    public var new_chat_members: [User] {
+        get { return json["new_chat_members"].arrayValue() }
+        set { json["new_chat_members"] = newValue.isEmpty ? JSON.null : JSON.initFrom(newValue) }
     }
 
     /// Optional. A member was removed from the group, information about them (this member may be the bot itself)
@@ -293,6 +317,28 @@ public struct Message: JsonConvertible {
         }
         set {
             json["pinned_message"] = newValue?.json ?? JSON.null
+        }
+    }
+
+    /// Optional. Message is an invoice for a payment, information about the invoice. More about payments »
+    public var invoice: Invoice? {
+        get {
+            let value = json["invoice"]
+            return value.isNullOrUnknown ? nil : Invoice(json: value)
+        }
+        set {
+            json["invoice"] = newValue?.json ?? JSON.null
+        }
+    }
+
+    /// Optional. Message is a service message about a successful payment, information about the payment. More about payments »
+    public var successful_payment: SuccessfulPayment? {
+        get {
+            let value = json["successful_payment"]
+            return value.isNullOrUnknown ? nil : SuccessfulPayment(json: value)
+        }
+        set {
+            json["successful_payment"] = newValue?.json ?? JSON.null
         }
     }
 

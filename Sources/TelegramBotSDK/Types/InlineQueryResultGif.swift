@@ -42,6 +42,12 @@ public struct InlineQueryResultGif: JsonConvertible {
         set { json["gif_height"].int = newValue }
     }
 
+    /// Optional. Duration of the GIF
+    public var gif_duration: Int? {
+        get { return json["gif_duration"].int }
+        set { json["gif_duration"].int = newValue }
+    }
+
     /// URL of the static thumbnail for the result (jpeg or gif)
     public var thumb_url: String {
         get { return json["thumb_url"].stringValue }
