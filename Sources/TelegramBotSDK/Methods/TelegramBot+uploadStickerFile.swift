@@ -5,13 +5,13 @@ import Foundation
 import Dispatch
 
 public extension TelegramBot {
-    typealias UploadStickerFileCompletion = (_ result: the uploaded File?, _ error: DataTaskError?) -> ()
+    typealias UploadStickerFileCompletion = (_ result: File?, _ error: DataTaskError?) -> ()
 
     /// Use this method to upload a .png file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
     /// - Parameters:
     ///     - user_id: User identifier of sticker file owner
     ///     - png_sticker: Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More info on Sending Files »
-    /// - Returns: the uploaded File on success. Nil on error, in which case `TelegramBot.lastError` contains the details.
+    /// - Returns: File on success. Nil on error, in which case `TelegramBot.lastError` contains the details.
     /// - Note: Blocking version of the method.
     ///
     /// - SeeAlso: <https://core.telegram.org/bots/api#uploadstickerfile>
@@ -19,7 +19,7 @@ public extension TelegramBot {
     public func uploadStickerFileSync(
             user_id: Int64,
             png_sticker: InputFile,
-            _ parameters: [String: Any?] = [:]) -> the uploaded File? {
+            _ parameters: [String: Any?] = [:]) -> File? {
         return requestSync("uploadStickerFile", defaultParameters["uploadStickerFile"], parameters, [
             "user_id": user_id,
             "png_sticker": png_sticker])
@@ -29,7 +29,7 @@ public extension TelegramBot {
     /// - Parameters:
     ///     - user_id: User identifier of sticker file owner
     ///     - png_sticker: Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More info on Sending Files »
-    /// - Returns: the uploaded File on success. Nil on error, in which case `error` contains the details.
+    /// - Returns: File on success. Nil on error, in which case `error` contains the details.
     /// - Note: Asynchronous version of the method.
     ///
     /// - SeeAlso: <https://core.telegram.org/bots/api#uploadstickerfile>

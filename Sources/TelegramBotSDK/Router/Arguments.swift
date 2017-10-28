@@ -57,10 +57,11 @@ public class Arguments {
         }
         let validator = Scanner(string: word)
         validator.charactersToBeSkipped = nil
-        guard let value = validator.scanInt64(), validator.isAtEnd else {
+        var result = Int64()
+        guard validator.scanInt64(&result), validator.isAtEnd else {
             return nil
         }
-        return value
+        return result
     }
     
 	public func scanDouble() -> Double? {
