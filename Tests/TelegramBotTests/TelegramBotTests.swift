@@ -2,7 +2,7 @@
 // (c) 2015 - 2016 Andrey Fidrya. MIT license. See LICENSE for more information.
 
 import XCTest
-@testable import TelegramBot
+@testable import TelegramBotSDK
 
 class TelegramBotTests: XCTestCase {
     var token: String!
@@ -100,10 +100,10 @@ class TelegramBotTests: XCTestCase {
         // autoreconnects in action (but the test
         // will fail)
 #if true
-        bot.errorHandler = { task, taskData, error in
+        /*bot.errorHandler = { task, taskData, error in
             print("getMe: errorHandler: task: \(task), taskData: \(taskData), error: \(error)")
             expectGetMe.fulfill()
-        }
+        }*/
 #endif
 
         bot.getMeAsync { user in
