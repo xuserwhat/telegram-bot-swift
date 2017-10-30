@@ -24,8 +24,7 @@ extension String {
         let whitespaceAndNewline = CharacterSet.whitespacesAndNewlines
         scanner.skipCharacters(from: whitespaceAndNewline)
         
-        
-        guard scanner.skipCharacters(from: CharacterSet(charactersIn: "/")) else {
+        guard scanner.scanString("/", into: nil) else {
             return self
         }
         
@@ -37,7 +36,7 @@ extension String {
         let usernameSeparatorIndex = scanner.scanLocation
 
         let usernameSeparator = "@"
-        guard scanner.skipCharacters(from: CharacterSet(charactersIn: usernameSeparator)) else {
+        guard scanner.scanString(usernameSeparator, into: nil) else {
             return self
         }
 
