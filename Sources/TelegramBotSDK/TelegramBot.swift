@@ -212,6 +212,9 @@ public class TelegramBot {
         curl_easy_setopt_binary(curl, CURLOPT_POSTFIELDS, requestBytes)
         curl_easy_setopt_int(curl, CURLOPT_POSTFIELDSIZE, Int32(byteCount))
         
+        #if os(Linux)
+        curl_easy_setopt_string(curl, CURLOPT_CAINFO, "/etc/ssl/certs/ca-certificates.crt")
+        #endif
         var headers: UnsafeMutablePointer<curl_slist>? = nil
         headers = curl_slist_append(headers, "Content-Type: \(contentType)")
         curl_easy_setopt_slist(curl, CURLOPT_HTTPHEADER, headers)

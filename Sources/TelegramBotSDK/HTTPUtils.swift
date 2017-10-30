@@ -57,9 +57,9 @@ public class HTTPUtils {
             if !result.isEmpty {
                 result += "&"
             }
-            let keyUrlencoded = keyString?.formUrlencode()
+            let keyUrlencoded = keyString!.formUrlencode()
             let valueUrlencoded = valueString.formUrlencode()
-            result += "\(keyUrlencoded ?? "")=\(valueUrlencoded)"
+            result += "\(keyUrlencoded)=\(valueUrlencoded)"
         }
         return result
     }
