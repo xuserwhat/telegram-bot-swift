@@ -23,7 +23,7 @@ extension String {
                 "0123456789" +
                 "abcdefghijklmnopqrstuvwxyz" +
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
-                "-._* ")
+                "-._*")
             return cs
         }()
         
@@ -53,7 +53,8 @@ extension String {
         #else
         let encoded = addingPercentEncoding(withAllowedCharacters: HTTPData.formUrlencodedAllowedCharacters)
         #endif
-        return encoded?.replacingOccurrences(of: " ", with: "+") ?? ""
+        return encoded ?? ""
+        //return encoded?.replacingOccurrences(of: " ", with: "+") ?? ""
     }
     
     /// Percent-encodes everything except alphanumerics
