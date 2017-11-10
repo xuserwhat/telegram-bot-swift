@@ -45,6 +45,11 @@ extension Router {
     
 	// Subscripts taking String
 
+    public subscript(_ commandString: String, _ options: Command.Options, _ startSymbol: String) -> (Context) throws -> Bool {
+        get { fatalError("Not implemented") }
+        set { add(Command(commandString, options: options, startSymbol: startSymbol), newValue) }
+    }
+    
 	public subscript(_ commandString: String, _ options: Command.Options) -> (Context) throws -> Bool {
 		get { fatalError("Not implemented") }
         set { add(Command(commandString, options: options), newValue) }
@@ -55,6 +60,14 @@ extension Router {
         set { add(Command(commandString), newValue) }
     }
 
+    public subscript(_ commandStrings: [String], _ options: Command.Options, _ startSymbol: String) -> (Context) throws -> Bool {
+        get { fatalError("Not implemented") }
+        set {
+            let commands = commandStrings.map { Command($0, options: options, startSymbol: startSymbol) }
+            add(commands, newValue)
+        }
+    }
+    
     public subscript(_ commandStrings: [String], _ options: Command.Options) -> (Context) throws -> Bool {
         get { fatalError("Not implemented") }
         set {

@@ -26,7 +26,7 @@ public class Command {
         /// Require command to be prefixed with "/".
         /// By default prefixing is optional.
         /// Ignored if `exactMatch` flag is set.
-        public static let slashRequired = Options(rawValue: 1 << 1)
+        public static let startSymbolRequired = Options(rawValue: 1 << 1)
         
         /// Case sensitive comparision of commands.
         public static let caseSensitive = Options(rawValue: 1 << 2)
@@ -37,11 +37,25 @@ public class Command {
     let name: String
     let nameWords: [String]
     let options: Options
+    let startSymbol: String?
     
-    public init(_ name: String, options: Options = []) {
+    public init(_ name: String, options: Options = [], startSymbol: String? = nil) {
         self.options = options
         let finalName: String
-        if !options.contains(.exactMatch) && name.hasPrefix("/") {
+        let finalStartSymbol: String?
+        
+        if let startSymbol = startSymbol {
+            if startSymbol.count > 1 {
+                finalStartSymbol = startSymbol[0]
+                print("WARNING: startSymbol arguments should be a 1 character String")
+            } else {
+                finalStartSymbol = startSymbol
+            }
+        } else {
+            finalStartSymbol = startSymbol
+        }
+        
+        if !options.contains(.exactMatch) && name.hasPrefix(finalStartSymbol ?? "/") {
             finalName = name.substring(from: name.index(after: name.startIndex))
             print("WARNING: Command name shouldn't start with '/', the slash is added automatically if needed")
         } else {
@@ -49,26 +63,27 @@ public class Command {
         }
         self.name = finalName
         nameWords = finalName.components(separatedBy: T.whitespaceAndNewline)
+        self.startSymbol = finalStartSymbol
     }
     	
-    public func fetchFrom(_ scanner: Scanner, caseSensitive: Bool = false) -> (command: String, startsWithSlash: Bool)? {
+    public func fetchFrom(_ scanner: Scanner, caseSensitive: Bool = false) -> (command: String, startsWithSymbol: Bool)? {
         if nameWords.isEmpty {
             // This is "match all" rule
             guard let word = scanner.scanUpToCharacters(from: T.whitespaceAndNewline) else {
                 return nil
             }
 
-            let startsWithSlash = word.hasPrefix("/")
-            if options.contains(.slashRequired) && !startsWithSlash {
+            let startsWithSymbol = word.hasPrefix(startSymbol ?? "/")
+            if options.contains(.startSymbolRequired) && !startsWithSymbol {
                 return nil
             }
-            return (word, startsWithSlash)
+            return (word, startsWithSymbol)
         }
 
         let caseSensitive = caseSensitive || options.contains(.caseSensitive)
         var userCommand = ""
         var isFirstWord = true
-        var firstWordStartsWithSlash = false
+        var firstWordStartsWithSymbol = false
         
         // Each word in nameWords should match a word (possibly abbreviated) from scanner
         for nameWord in nameWords {
@@ -77,7 +92,7 @@ public class Command {
             }
             
             if isFirstWord {
-                firstWordStartsWithSlash = word.hasPrefix("/")
+                firstWordStartsWithSymbol = word.hasPrefix(startSymbol ?? "/")
             }
             
             if options.contains(.exactMatch) {
@@ -90,12 +105,12 @@ public class Command {
                 
             } else {
                 
-                if isFirstWord && options.contains(.slashRequired) {
-                    guard firstWordStartsWithSlash else { return nil }
+                if isFirstWord && options.contains(.startSymbolRequired) {
+                    guard firstWordStartsWithSymbol else { return nil }
                 }
                 
                 let processedWord: String
-                if isFirstWord && firstWordStartsWithSlash {
+                if isFirstWord && firstWordStartsWithSymbol {
                     processedWord = word.substring(from: word.index(after: word.startIndex))
                 } else {
                     processedWord = word
@@ -110,6 +125,6 @@ public class Command {
             
             isFirstWord = false
         }
-        return (userCommand, firstWordStartsWithSlash)
+        return (userCommand, firstWordStartsWithSymbol)
     }
 }

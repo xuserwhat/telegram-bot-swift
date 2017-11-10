@@ -81,13 +81,13 @@ public class Router {
 		
 		for path in paths {
 			var command = ""
-            var startsWithSlash = false
-            if !match(contentType: path.contentType, update: update, commandScanner: scanner, userCommand: &command, startsWithSlash: &startsWithSlash) {
+            var startsWithSymbol = false
+            if !match(contentType: path.contentType, update: update, commandScanner: scanner, userCommand: &command, startsWithSymbol: &startsWithSymbol) {
 				scanner.scanLocation = originalScanLocation
 				continue;
 			}
 			
-            let context = Context(bot: bot, update: update, scanner: scanner, command: command, startsWithSlash: startsWithSlash, properties: properties)
+            let context = Context(bot: bot, update: update, scanner: scanner, command: command, startsWithSymbol: startsWithSymbol, properties: properties)
 			let handler = path.handler
 
 			if try handler(context) {
@@ -100,12 +100,12 @@ public class Router {
 
 		if update.message != nil && !string.isEmpty {
 			if let unmatched = unmatched {
-                let context = Context(bot: bot, update: update, scanner: scanner, command: "", startsWithSlash: false, properties: properties)
+                let context = Context(bot: bot, update: update, scanner: scanner, command: "", startsWithSymbol: false, properties: properties)
 				return try unmatched(context)
 			}
 		} else {
 			if let unsupportedContentType = unsupportedContentType {
-				let context = Context(bot: bot, update: update, scanner: scanner, command: "", startsWithSlash: false, properties: properties)
+				let context = Context(bot: bot, update: update, scanner: scanner, command: "", startsWithSymbol: false, properties: properties)
 				return try unsupportedContentType(context)
 			}
 		}
@@ -113,7 +113,7 @@ public class Router {
 		return false
     }
 	
-    func match(contentType: ContentType, update: Update, commandScanner: Scanner, userCommand: inout String, startsWithSlash: inout Bool) -> Bool {
+    func match(contentType: ContentType, update: Update, commandScanner: Scanner, userCommand: inout String, startsWithSymbol: inout Bool) -> Bool {
 		
 		if let message = update.message {
             switch contentType {
@@ -122,7 +122,7 @@ public class Router {
                     return false // Does not match path command
                 }
                 userCommand = result.command
-                startsWithSlash = result.startsWithSlash
+                startsWithSymbol = result.startsWithSymbol
                 return true
             case .commands(let commands):
                 let originalScanLocation = commandScanner.scanLocation
@@ -132,7 +132,7 @@ public class Router {
                         continue
                     }
                     userCommand = result.command
-                    startsWithSlash = result.startsWithSlash
+                    startsWithSymbol = result.startsWithSymbol
                     return true
                 }
                 return false

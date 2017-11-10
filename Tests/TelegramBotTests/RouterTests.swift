@@ -37,6 +37,12 @@ class RouterTests: XCTestCase {
         XCTAssertTrue ( matches(paths: ["hello", "world"], text: "world") )
     }
     
+    func testDifferentStartSymbol() {
+        XCTAssertTrue ( matches(path: "hello", text: ".hello", startSymbol: ".") )
+        XCTAssertTrue ( matches(path: "hello", text: "!hello", startSymbol: "!") )
+        XCTAssertFalse( matches(path: "hello", text: "/hello", startSymbol: ".") )
+    }
+    
     func testCaseSensitivity() {
         XCTAssertTrue ( matches(path: "HEllo", text: "helLO") )
         XCTAssertTrue ( matches(path: "HEllo", text: "/helLO") )
@@ -65,8 +71,8 @@ class RouterTests: XCTestCase {
         XCTAssertTrue ( matches(path: "hello world", text: "he wo") )
         XCTAssertFalse( matches(path: "hello world", text: "he word") )
 
-        XCTAssertFalse( matches(path: "hello world", text: "he wo", options: .slashRequired) )
-        XCTAssertTrue ( matches(path: "hello world", text: "/he wo", options: .slashRequired) )
+        XCTAssertFalse( matches(path: "hello world", text: "he wo", options: .startSymbolRequired) )
+        XCTAssertTrue ( matches(path: "hello world", text: "/he wo", options: .startSymbolRequired) )
 
         XCTAssertFalse( matches(path: "hello world", text: "/he wo", options: .exactMatch) )
         XCTAssertTrue ( matches(path: "/hello world", text: "/he wo", options: .exactMatch) )
@@ -160,6 +166,24 @@ class RouterTests: XCTestCase {
         
         XCTAssertTrue(matched)
     }
+    
+    func matches(path: String, text: String, options: Command.Options = [], startSymbol: String) -> Bool {
+        update.message?.text = text
+        
+        var matched = false
+        
+        let router = Router(bot: bot)
+        router[path, options, startSymbol] = { context in
+            print("path=\(path) text=\(text) command=\(context.command)")
+            matched = true
+            return true
+        }
+        
+        do { try router.process(update: update) }
+        catch { XCTFail() }
+        
+        return matched
+    }
 
     func matches(path: String, text: String, options: Command.Options = []) -> Bool {
         update.message?.text = text
@@ -200,6 +224,7 @@ class RouterTests: XCTestCase {
     static var allTests : [(String, (RouterTests) -> () throws -> Void)] {
         return [
             ("testRouter", testRouter),
+            ("testDifferentStartSymbol", testDifferentStartSymbol),
             ("testCaseSensitivity", testCaseSensitivity),
             ("testMultiPath", testMultiPath),
             ("testMultiWordCommands", testMultiWordCommands),

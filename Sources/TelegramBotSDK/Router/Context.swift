@@ -45,10 +45,10 @@ public class Context {
     }
     public var properties: [String: AnyObject]
 	
-    init(bot: TelegramBot, update: Update, scanner: Scanner, command: String, startsWithSlash: Bool, properties: [String: AnyObject] = [:]) {
+    init(bot: TelegramBot, update: Update, scanner: Scanner, command: String, startsWithSymbol: Bool, properties: [String: AnyObject] = [:]) {
 		self.bot = bot
 		self.update = update
-        self.slash = startsWithSlash
+        self.slash = startsWithSymbol
         self.command = command
         self.args = Arguments(scanner: scanner)
         self.properties = properties
