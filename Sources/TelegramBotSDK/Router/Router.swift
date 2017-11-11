@@ -29,7 +29,6 @@ public class Router {
 	public lazy var unmatched: Handler? = { context in
         guard context.privateChat else { return false }
         guard let command = context.args.scanWord() else { return false }
-		context.respondAsync("Unrecognized command: \(command). Type /help for help.")
 		return true
 	}
 
